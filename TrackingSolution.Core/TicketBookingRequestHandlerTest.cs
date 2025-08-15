@@ -1,4 +1,6 @@
-﻿using Shouldly;
+﻿using Moq;
+using Shouldly;
+using TrackingSolution.Core_Project.DataService;
 using TrackingSolution.Core_Project.Domain;
 using TrackingSolution.Core_Project.Handler;
 using TrackingSolution.Core_Project.Model;
@@ -9,11 +11,11 @@ namespace TrackingSolution.Core.Test
     {
         private readonly TicketBookingRequestHandler _handler;
         private readonly TicketBookingRequest _request;
+        private Mock<ITecketBookingService> _ticketBookingServiceMock;
 
         public TicketBookingRequestHandlerTest()
         {
             //// Arrange
-            _handler = new TicketBookingRequestHandler();
             var _request = new TicketBookingRequest
             {
                 CustomerName = "John Doe",
@@ -21,6 +23,10 @@ namespace TrackingSolution.Core.Test
                 EventId = 1,
                 NumberOfTickets = 2
             };
+
+            _ticketBookingServiceMock = new Mock<ITecketBookingService>();
+            _handler = new TicketBookingRequestHandler(_ticketBookingServiceMock.Object);
+
         }
 
         [Fact]
@@ -59,6 +65,21 @@ namespace TrackingSolution.Core.Test
         [Fact]
         public void Should_Save_Ticket_Booking_Request()
         {
+            TicketBooking savedBooking = null;
+            _ticketBookingServiceMock.Setup(x => x.Save(It.IsAny<TicketBooking>())).
+                Callback<TicketBooking>(booking =>
+                {
+                    savedBooking = booking;
+                });
+            _handler.BookService(_request);
+
+            _ticketBookingServiceMock.Verify(x => x.Save(It.IsAny<TicketBooking>()), Times.Once);
+
+            savedBooking.ShouldNotBeNull();
+            savedBooking.CustomerName.ShouldBe(_request.CustomerName);
+            savedBooking.Email.ShouldBe(_request.Email);
+            savedBooking.EventId.ShouldBe(_request.EventId);
+
 
         }
     }
