@@ -52,5 +52,11 @@ namespace TrackingSolution.Core.Test
             // Assertiation
             Assert.Throws<ArgumentNullException>(() => _handler.BookService(null));
         }
+
+        [Fact]
+        public void Should_Save_Ticket_Booking_Request()
+        {
+
+        }
     }
 }
