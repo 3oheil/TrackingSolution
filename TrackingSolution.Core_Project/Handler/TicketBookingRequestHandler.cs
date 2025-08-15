@@ -4,6 +4,11 @@ namespace TrackingSolution.Core_Project.Handler
 {
     public class TicketBookingRequestHandler
     {
+        public TicketBookingRequestHandler(DataService.ITecketBookingService @object)
+        {
+
+        }
+
         public ServiceBookingResult BookService(TicketBookingRequest request)
         {
             ArgumentNullException.ThrowIfNull(request);
